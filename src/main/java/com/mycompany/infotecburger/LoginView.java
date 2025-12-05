@@ -28,6 +28,9 @@ public class LoginView extends JFrame {
     // Componentes del Panel del logo
     JLabel imageLabel; // este label se usa para hacer un display de la imagen en el panel
 
+    // Controlador de usuario usado para el login o el registro
+    UserController userController;
+
     // Este es el constructor de la clase del Frame
     public LoginView() {
         super("InfoTec Burger: Inicio de sesión"); // Llamar al constructor de la clase JFrame
@@ -48,6 +51,9 @@ public class LoginView extends JFrame {
         formPanel = new JPanel();
         logoPanel = new JPanel();
         imageLabel = new JLabel();
+
+        // Crear una instancia del controlador
+        userController =  new UserController();
 
         // Configuración del layout
         // Al estar programa la interfaz con código puro
@@ -165,11 +171,32 @@ public class LoginView extends JFrame {
         // Para escuchar acciones en la interacción del componente, debe registrarse un listener
         // Cuanto se interactúa con la GUI se llama al método actionPerformed
         loginButton.addActionListener((ActionEvent e) -> {
-            System.out.println("Login button");
+            // Obtener el texto del usuario y del password
+            String username = usernameField.getText();
+            String password = new String(passwordField.getPassword()); // getPassword devuelve char[], pero se puede construir un String con el constructor de String
+
+            // Llamar al controlador de usuario con el método de obtener usuario y contraseña
+            // La clase usuario está dentro de UserController y se debe declarar el tipo primero con la clase padre UserController
+            UserController.Usuario usuario = userController.obtenerPorUsuarioYPassword(username, password);
+            if (usuario == null) {
+                System.out.println("Usuario no encontrado");
+            } else {
+                System.out.println("Usuario encontrado: " + usuario.getUsername());
+            }
         });
 
         registerButton.addActionListener((ActionEvent e) -> {
-            System.out.println("Registrar button");
+            String username = usernameField.getText();
+            String password = new String(passwordField.getPassword());
+
+            // Si el usuario ya existe no se puede crear el mismo
+            UserController.Usuario usuario = userController.obtenerPorUsuario(username);
+            // Si no se encontró el usuario se pend crear
+            if (usuario == null) {
+                userController.crearUsuario(username, password);
+            } else {
+                System.out.println("Ese usuario ya está registrado");
+            }
         });
 
         // CONFIGURACIÓN DEL PANEL CONTENEDOR
