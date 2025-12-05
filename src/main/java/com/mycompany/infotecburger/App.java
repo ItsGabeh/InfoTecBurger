@@ -1,4 +1,4 @@
-package com.mycompany.infortecburger;
+package com.mycompany.infotecburger;
 
 public class App {
     static void main() {
