@@ -24,6 +24,6 @@ Sigue estos pasos para abrir el proyecto en NetBeans:
 2.  **Abrir el Proyecto en NetBeans:**
     *   Abre NetBeans IDE.
     *   Ve a **File** -> **Open Project**.
-    *   Navega hasta la carpeta donde clonaste el proyecto (`[Nombre de tu Proyecto]`).
+    *   Navega hasta la carpeta donde clonaste el proyecto.
     *   Selecciona la carpeta raíz del proyecto (donde se encuentra el archivo `pom.xml`) y haz clic en **Open Project**. NetBeans reconocerá automáticamente que es un proyecto Maven.
     *   Cambia las credenciales de la base de datos en el UserController para que pruebes el proyecto
