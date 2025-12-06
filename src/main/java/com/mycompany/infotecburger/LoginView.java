@@ -24,6 +24,7 @@ public class LoginView extends JFrame {
     JLabel passwordLabel;
     JButton loginButton; // El botón que llama al login
     JButton registerButton; //El botón que se usa para registrar
+    JLabel errorLabel; // Este label se va a usar como un label que va a mostrar un error si el registro o el login falla
 
     // Componentes del Panel del logo
     JLabel imageLabel; // este label se usa para hacer un display de la imagen en el panel
@@ -47,6 +48,7 @@ public class LoginView extends JFrame {
         passwordLabel = new JLabel("Contraseña:");
         loginButton = new JButton("Login");
         registerButton = new JButton("Registrar");
+        errorLabel = new JLabel("");
         containerPanel = new JPanel();
         formPanel = new JPanel();
         logoPanel = new JPanel();
@@ -115,6 +117,14 @@ public class LoginView extends JFrame {
         gbc.fill = GridBagConstraints.CENTER;
         formPanel.add(registerButton, gbc);
 
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        gbc.gridwidth = 2;
+        gbc.gridheight = 1;
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.fill = GridBagConstraints.CENTER;
+        formPanel.add(errorLabel, gbc);
+
         // CONFIGURACIÓN DEL PANEL DEL LOGO
         // Añadir el label de la imagen en el panel del logo
         // Aquí se añade un BorderLayout porque más adelante si la imagen no carga se quiere mostrar un label centrado en el panel
@@ -179,9 +189,12 @@ public class LoginView extends JFrame {
             // La clase usuario está dentro de UserController y se debe declarar el tipo primero con la clase padre UserController
             UserController.Usuario usuario = userController.obtenerPorUsuarioYPassword(username, password);
             if (usuario == null) {
-                System.out.println("Usuario no encontrado");
+                // System.out.println("Usuario no encontrado");
+                errorLabel.setText("Usuario no encontrado");
+                errorLabel.setForeground(Color.RED);
             } else {
                 System.out.println("Usuario encontrado: " + usuario.getUsername());
+                errorLabel.setText("");
             }
         });
 
@@ -193,9 +206,12 @@ public class LoginView extends JFrame {
             UserController.Usuario usuario = userController.obtenerPorUsuario(username);
             // Si no se encontró el usuario se pend crear
             if (usuario == null) {
+                errorLabel.setText("");
                 userController.crearUsuario(username, password);
             } else {
-                System.out.println("Ese usuario ya está registrado");
+                // System.out.println("Ese usuario ya está registrado");
+                errorLabel.setText("El usuario ya existe");
+                errorLabel.setForeground(Color.RED);
             }
         });
 
