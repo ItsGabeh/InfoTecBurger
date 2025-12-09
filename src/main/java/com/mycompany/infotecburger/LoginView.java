@@ -193,7 +193,11 @@ public class LoginView extends JFrame {
                 errorLabel.setText("Usuario no encontrado");
                 errorLabel.setForeground(Color.RED);
             } else {
-                System.out.println("Usuario encontrado: " + usuario.getUsername());
+                // System.out.println("Usuario encontrado: " + usuario.getUsername());
+                MainView mainView = new MainView(); // Hacer una instancia de la nueva vista principal
+                mainView.setVisible(true);
+
+                this.dispose(); // Libera los recursos para esta ventana sin terminar el programa
                 errorLabel.setText("");
             }
         });
