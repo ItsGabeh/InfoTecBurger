@@ -20,7 +20,8 @@ public class PrinterView extends JDialog {
     JButton printButton;
     JButton cancelButton; // Opcional, solo para cerrar la ventana en caso de que no se quiera cerrar desde el botón de cerrar
 
-    private String contentToPrint; // El contenido a imprimir
+    private List<MainView.MenuItem> menuItems; // lista del menu a imprimir
+    private String total;
 
     // Para mostrar este dialog, es necesario especificar un Frame que actúa como el dueño de la ventana y un título
     public PrinterView(Frame owner) {
@@ -29,8 +30,9 @@ public class PrinterView extends JDialog {
     }
 
     // Se asume que el contenido que se pasa para imprimir no es nulo o está vacío
-    public void setContentToPrint(String contentToPrint) {
-        this.contentToPrint = contentToPrint;
+    public void setContentToPrint(List<MainView.MenuItem> menuItems, String total) {
+        this.menuItems = menuItems;
+        this.total = total;
     }
 
     private void initComponents() {
@@ -84,7 +86,16 @@ public class PrinterView extends JDialog {
             System.out.println(printerName);
 
             if (printerName != null &&  !printerName.isBlank()) {
-                TicketPrinterController.print(printerName, contentToPrint);
+
+                // Caso conocido
+                // Microsoft Print to PDF debe imprimirse con Graphics
+                if (printerName.equalsIgnoreCase("Microsoft Print to PDF")) {
+                    TicketPrinterController.printWithGraphics(printerName, menuItems, total);
+                } else {
+                    // Si no puede imprimirse normalmente
+                    TicketPrinterController.print(printerName, menuItems, total);
+                }
+
                 this.dispose(); // Una vez que se imprimó el contenido, se cierra la ventana automáticamente
             } else {
                 System.out.println("No se seleccionó una impresora para imprimir");
