@@ -2,6 +2,8 @@ package com.mycompany.infotecburger;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Esta clase es la vista principal del punto de venta
@@ -24,6 +26,7 @@ public class MainView extends JFrame {
     JButton bigColaButton;
     JButton smallColaButton;
     JButton deleteOrderButton; // Solo para poder borrar los items, no hay una función específica para quitar ciertos elementos por separado
+    JButton saveOrderButton;
 
     // Declaración de los nombres de los items para mantener coherencia
     // Práctica tomada del libro Effective Java de Joshua Bloch
@@ -81,6 +84,7 @@ public class MainView extends JFrame {
         bigColaButton = new JButton(MenuItem.BIG_COLA.getName());
         smallColaButton = new JButton(MenuItem.SMALL_COLA.getName());
         deleteOrderButton = new JButton("Borrar orden");
+        saveOrderButton = new JButton("Guardar orden");
         menuModel = new DefaultListModel<>(); // Este modelo de la lista para la lista de la orden nos va a permitir añadir objetos
         orderList = new JList<>(menuModel);
         orderListScrollPane = new JScrollPane(orderList); // Añadir la lista a este scroll pane
@@ -167,10 +171,17 @@ public class MainView extends JFrame {
 
         gbc.gridx = 0;
         gbc.gridy = 2;
-        gbc.gridwidth = 2;
+        gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.WEST;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.fill = GridBagConstraints.CENTER;
         orderMenuPanel.add(deleteOrderButton, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.CENTER;
+        orderMenuPanel.add(saveOrderButton, gbc);
 
         // CONFIGURACIÓN DE LOS BOTONES
         bigBurgerButton.addActionListener(e -> {
@@ -218,6 +229,44 @@ public class MainView extends JFrame {
         deleteOrderButton.addActionListener(e -> {
             menuModel.removeAllElements();
             totalPriceField.setText("0.0");
+        });
+
+        // En un option pane pone un cuadro de texto para confirmar
+        // TODO: implementar la GUI del ticket
+        saveOrderButton.addActionListener(e -> {
+            int result = JOptionPane.showConfirmDialog(null, "¿Seguro que quieres guardar la orden?", "Confirmar orden", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (result == JOptionPane.OK_OPTION) {
+                // Imprimir un ticket con los datos de la orden
+                StringBuilder builder = new StringBuilder();
+                builder.append("======== Ticket de orden =======\n");
+
+                // Recorrer cada elemento de la orden y agregarlo al string
+                int orderSize = menuModel.getSize();
+                for (int i = 0; i < orderSize; i++) {
+                    // Obtener el item para no llamar más veces a getElementAt
+                    MenuItem menuItem = menuModel.getElementAt(i);
+
+                    // Extra: para hacer que el ticket se vea mejor con los precios separados para legibilidad
+                    String tabs;
+                    int itemNameLength = menuItem.getName().length();
+                    if (itemNameLength <= 17) {
+                        tabs = "  \t\t";
+                    } else if (itemNameLength >= 21) {
+                        tabs = "\t";
+                    } else  {
+                        tabs = "\t\t";
+                    }
+
+                    // Para evitar string concatenation en el builder se recomienda hacer varias llamadas a append en cadena
+                    builder.append(" - ").append(menuItem.getName()).append(tabs).append(menuItem.getPrice()).append("\n");
+                }
+                builder.append("\nTotal a pagar: ").append(totalPriceField.getText()).append("\n================================\n");
+
+                // Abrir la ventana para seleccionar la impresora
+                PrinterView printerView = new PrinterView(this); // La instancia de este frame es el padre de este JDialog
+                printerView.setContentToPrint(builder.toString()); // Se le pasa el string armado con el builder que es lo que se quiere imprimir
+                printerView.setVisible(true);
+            }
         });
 
         // CONFIGURACIÓN DEL PANEL CONTENEDOR
