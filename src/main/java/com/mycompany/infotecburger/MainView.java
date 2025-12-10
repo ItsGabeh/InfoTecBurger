@@ -236,35 +236,18 @@ public class MainView extends JFrame {
         saveOrderButton.addActionListener(e -> {
             int result = JOptionPane.showConfirmDialog(null, "¿Seguro que quieres guardar la orden?", "Confirmar orden", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (result == JOptionPane.OK_OPTION) {
-                // Imprimir un ticket con los datos de la orden
-                StringBuilder builder = new StringBuilder();
-                builder.append("======== Ticket de orden =======\n");
-
-                // Recorrer cada elemento de la orden y agregarlo al string
-                int orderSize = menuModel.getSize();
-                for (int i = 0; i < orderSize; i++) {
-                    // Obtener el item para no llamar más veces a getElementAt
-                    MenuItem menuItem = menuModel.getElementAt(i);
-
-                    // Extra: para hacer que el ticket se vea mejor con los precios separados para legibilidad
-                    String tabs;
-                    int itemNameLength = menuItem.getName().length();
-                    if (itemNameLength <= 17) {
-                        tabs = "  \t\t";
-                    } else if (itemNameLength >= 21) {
-                        tabs = "\t";
-                    } else  {
-                        tabs = "\t\t";
-                    }
-
-                    // Para evitar string concatenation en el builder se recomienda hacer varias llamadas a append en cadena
-                    builder.append(" - ").append(menuItem.getName()).append(tabs).append(menuItem.getPrice()).append("\n");
+                // Obtener una lista de items desde el modelo
+                List<MenuItem> items = new  ArrayList<MenuItem>();
+                int itemsSize = menuModel.getSize();
+                for (int i = 0; i < itemsSize; i++) {
+                    items.add(menuModel.getElementAt(i));
                 }
-                builder.append("\nTotal a pagar: ").append(totalPriceField.getText()).append("\n================================\n");
+
 
                 // Abrir la ventana para seleccionar la impresora
                 PrinterView printerView = new PrinterView(this); // La instancia de este frame es el padre de este JDialog
-                printerView.setContentToPrint(builder.toString()); // Se le pasa el string armado con el builder que es lo que se quiere imprimir
+                // Pasarle la lista de items y el total a la vista del printer
+                printerView.setContentToPrint(items, totalPriceField.getText());
                 printerView.setVisible(true);
             }
         });
